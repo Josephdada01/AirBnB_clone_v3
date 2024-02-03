@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """state modules"""
-from flask import Flask, Blueprint, jsonify, abort, request, make_response
+from flask import Flask, jsonify, abort, request, make_response
 from api.v1.views import app_views
 from models.state import State
 from models import storage
@@ -9,7 +9,7 @@ from models import storage
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
 def get_state():
     """using to_dict() to retrieve all state into a valid JSON"""
-    states = [state.to_dict() for state in State.storage.all()]
+    states = [state.to_dict() for state in storage.all(State).values()]
     return jsonify(states)
 
 
@@ -17,7 +17,7 @@ def get_state():
                  strict_slashes=False)
 def get_state_id(state_id):
     """retrieve states id"""
-    state = State.storage.get(state_id)
+    state = storage.get(State, state_id)
     if state is None:
         abort(404)
     return jsonify(state.to_dict())
@@ -27,10 +27,11 @@ def get_state_id(state_id):
                  strict_slashes=False)
 def delete_state(state_id):
     """delete state if the request require that"""
-    state = State.storage.get(state_id)
+    state = storage.get(state, state_id)
     if state is None:
         abort(404)
     state.delete()
+    storage.save()
     return jsonify({}), 200
 
 
@@ -53,7 +54,7 @@ def create_state():
                  strict_slashes=False)
 def update_state(state_id):
     """the funtion update state using PUT"""
-    state = State.storage.get(state_id)
+    state = storage.get(State, state_id)
     if state is None:
         abort(404)
 
