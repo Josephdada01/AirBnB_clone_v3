@@ -40,7 +40,7 @@ def state_cities(state_id):
 
 @app_views.route('cities/<city_id>', methods=['GET', 'DELETE', 'PUT'],
                  strict_slashes=False)
-def get_city(city_id):
+def city(city_id):
     """ Routes the city resource """
 
     cities = storage.all(City)
@@ -48,13 +48,14 @@ def get_city(city_id):
     if not 'City.' + city_id in cities:
         abort(404)
 
+    city = cities['City.' + city_id]
     if request.method == 'GET':
-        return jsonify(cities['City.' + city_id].to_dict())
+        return jsonify(city.to_dict())
     elif request.method == 'DELETE':
-        del cities['City.' + city_id]
+        storage.delete(city)
+        storage.save()
         return jsonify({}), 200
     elif request.method == 'PUT':
-        city = cities['City.' + city_id]
         for attribute in request.get_json():
             if attribute not in ('id', 'state_id', 'created_at',
                                  'updated_at'):
