@@ -30,11 +30,13 @@ def amenities(amenity_id=None):
             storage.save()
             return jsonify({}), 200
         elif request.method == 'PUT':
+            if not request.get_json():
+                return jsonify({"error": "Not a JSON"}), 400
             for attribute in request.get_json():
                 if attribute not in ('id', 'updated_at', 'created_at'):
                     setattr(amenity, attribute, request.get_json()[attribute])
-                    storage.save()
-                    return jsonify(amenity.to_dict())
+            storage.save()
+            return jsonify(amenity.to_dict())
 
     # list of all Amenity objects
     if request.method == 'GET':
@@ -42,9 +44,9 @@ def amenities(amenity_id=None):
         return jsonify(amenities)
     elif request.method == 'POST':
         if not request.get_json():
-            return "Not a JSON", 400
+            return jsonify({"error": "Not a JSON"}), 400
         elif 'name' not in request.get_json():
-            return "Missing name", 400
+            return jsonify({"error": "Missing name"}), 400
         amenity = Amenity(name=request.get_json()['name'])
         for attribute in request.get_json():
             if attribute not in ('id', 'updated_at', 'created_at'):

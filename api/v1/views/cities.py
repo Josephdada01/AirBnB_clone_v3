@@ -27,9 +27,9 @@ def state_cities(state_id):
     # handles post request
     elif request.method == 'POST':
         if not request.get_json():
-            return 'Not a JSON', 400
+            return jsonify({"error": "Not a JSON"}), 400
         if not request.get_json()['name']:
-            return 'Missing name', 400
+            return jsonify({'error': 'Missing name'}), 400
         city = City(name=request.get_json()['name'], state_id=state_id)
         for attribute in request.get_json():
             if attribute not in ('name', 'state_id'):
