@@ -50,21 +50,22 @@ def places(place_id):
     """
 
     places = storage.all(Place)
-    id = 'Place.' + place_id
+    id_ = 'Place.' + place_id
 
-    if id not in places:
+    if id_ not in places:
         abort(404)
     if request.method == 'GET':
-        return jsonify(places[id].to_dict())
+        return jsonify(places[id_].to_dict())
     elif request.method == 'DELETE':
-        storage.delete(places[id])
+        storage.delete(places[id_])
         storage.save()
         return jsonify({}), 200
-    data = request.json
-    if not data:
-        return jsonify({'error': 'Not a JSON'}), 400
-    for attribute in data:
-        if attribute not in ('id', 'created_at', 'updated_at'):
-            setattr(places[id], attribute, data[attribute])
-    storage.save()
-    return jsonify(places[id].to_dict())
+    elif request.method == 'PUT':
+        data = request.json
+        if not data:
+            return jsonify({'error': 'Not a JSON'}), 400
+        for attribute in data:
+            if attribute not in ('id', 'created_at', 'updated_at'):
+                setattr(places[id_], attribute, data[attribute])
+        storage.save()
+        return jsonify(places[id_].to_dict()), 200
