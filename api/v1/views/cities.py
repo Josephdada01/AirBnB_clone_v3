@@ -60,4 +60,5 @@ def city(city_id):
             if attribute not in ('id', 'state_id', 'created_at',
                                  'updated_at'):
                 setattr(city, attribute, request.get_json()[attribute])
+        storage.save()
         return jsonify(city.to_dict()), 200
