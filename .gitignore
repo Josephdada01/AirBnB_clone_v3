@@ -1,0 +1,6 @@
+api/__pycache__/*.pyc
+api/v1/__pycache__/*.pyc
+api/v1/views/*.pyc
+models/__pycache__/*.pyc
+models/engine/__pycache__/*.pyc
+web_flask/__pycache__/*.pyc
