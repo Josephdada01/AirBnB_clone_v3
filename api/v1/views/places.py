@@ -32,9 +32,9 @@ def city_places(city_id):
         if not data:
             return jsonify({"error": "Not a JSON"}), 400
         elif 'user_id' not in data:
-            return jsonify({"error": "Missing user_id"})
+            return jsonify({"error": "Missing user_id"}), 400
         elif 'name' not in data:
-            return jsonify({"error": "Missing name"})
+            return jsonify({"error": "Missing name"}), 400
         elif 'User.' + data['user_id'] not in users:
             abort(404)
         place = Place(**data)
@@ -67,5 +67,6 @@ def places(place_id):
         for attribute in data:
             if attribute not in ('id', 'created_at', 'updated_at'):
                 setattr(places[id_], attribute, data[attribute])
+        places[id_].save()
         storage.save()
         return jsonify(places[id_].to_dict()), 200

@@ -26,14 +26,15 @@ def state_cities(state_id):
         return jsonify(cities)
     # handles post request
     elif request.method == 'POST':
-        if not request.get_json():
+        data = request.get_json()
+        if not data:
             return jsonify({"error": "Not a JSON"}), 400
-        if not request.get_json()['name']:
+        if not data['name']:
             return jsonify({'error': 'Missing name'}), 400
-        city = City(name=request.get_json()['name'], state_id=state_id)
-        for attribute in request.get_json():
-            if attribute not in ('name', 'state_id'):
-                city[attribute] = request.get_json()[attribute]
+        city = City(name=data['name'], state_id=state_id)
+        for attribute in data:
+            if attribute not in ('state_id'):
+                city[attribute] = data[attribute]
         city.save()
         return jsonify(city.to_dict()), 201
 
@@ -56,9 +57,12 @@ def city(city_id):
         storage.save()
         return jsonify({}), 200
     elif request.method == 'PUT':
-        for attribute in request.get_json():
+        data = request.get_json()
+        if not data:
+            return jsonify({"error": "Not a JSON"})
+        for attribute in data:
             if attribute not in ('id', 'state_id', 'created_at',
                                  'updated_at'):
-                setattr(city, attribute, request.get_json()[attribute])
+                setattr(city, attribute, data[attribute])
         storage.save()
         return jsonify(city.to_dict()), 200
