@@ -27,7 +27,7 @@ def get_state_id(state_id):
                  strict_slashes=False)
 def delete_state(state_id):
     """delete state if the request require that"""
-    state = storage.get(state, state_id)
+    state = storage.get(State, state_id)
     if state is None:
         abort(404)
     state.delete()
