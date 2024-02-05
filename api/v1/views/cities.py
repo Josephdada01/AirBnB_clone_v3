@@ -26,7 +26,7 @@ def get_city_id(city_id):
 @app_views.route('/cities/<string:city_id>', methods=['DELETE'],
                  strict_slashes=False)
 def delete_city_id(city_id):
-    """delete state if the request require that"""
+    """delete city if the request require that"""
     city = storage.get(City, city_id)
     if city is None:
         abort(404)
