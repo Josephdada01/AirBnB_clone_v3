@@ -77,18 +77,3 @@ def update_city(city_id):
 
     city.save()
     return jsonify(city.to_dict()), 200
-
-
-@app_views.route('cities/<string:city_id>', method=['GET'],
-                 strict_slashes)
-def get_city(city_id):
-    """
-    gets city data with specified ID
-    """
-
-    city = storage.get(City, city_id)
-
-    if not city:
-        abort(404)
-
-    return jsonify(city.to_dict())

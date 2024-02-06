@@ -34,7 +34,7 @@ def place_reviews(place_id):
             return jsonify({"error": "Missing text"}), 400
         elif 'User.' + data['user_id'] not in data:
             abort(404)
-        review = Review(user_id=data['user_id'], text=data['text'])
+        review = Review(**data)
         return jsonify(review.to_dict()), 201
 
 
@@ -57,18 +57,10 @@ def review(review_id):
 
         if not data:
             return jsonify({"error": "Not a json"})
-        elif 'user_id' not in data:
-            return jsonify({"error": "Missing user_id"}), 400
-        elif 'text' not in data:
-            return jsonify({"error": "Missing text"}), 400
-        elif 'User.' + data['user_id'] not in data:
-            abort(404)
         for attribute in data:
             if attribute not in ('id', 'created_at', 'updated_at'):
                 setattr(reviews[id], attribute, data[attribute])
         storage.save()
         return jsonify(reviews[id].to_dict())
-    elif request.method == 'DELETE':
-        storage.delete(reviews[id])
-        storage.save()
-        return jsonify({}), 200
+    storage.delete(reviews[id])
+    storage.save()
