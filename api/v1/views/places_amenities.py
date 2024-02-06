@@ -34,26 +34,41 @@ def del_place_amenities(place_id, amenity_id):
     Processes POST or DELETE request
     """
 
-    places = storage.all(Place)
-    amenities = storage.all(Amenity)
-    place_id = 'Place.' + place_id
-    amenity_id = 'Amenity.' + amenity_id
+    place = storage.get(Place, place_id)
+    amenity = storage.get(Amenity, amenity_id)
+    meth = request.method
+    data = request.get_json()
 
-    if place_id not in places:
+    if not place:
         abort(404)
-    elif amenity_id not in amenities:
-        abort(404)
-    place = places[place_id]
-    amenity = amenities[amenity_id]
-
-    if amenity not in place.amenities:
+    elif not amenity:
         abort(404)
 
     if getenv('HBNB_TYPE_STORAGE') != 'db':
-        place.amenity_ids.remove(amenity)
+        if meth == 'DELETE':
+            place.amenity_ids.remove(amenity)
+        else:
+            if not data:
+                return jsonify({'error': 'Not a JSON'}), 400
+            elif amenity.place_id == place_id:
+                return jsonify(amenity.to_dict()) 200
+            else:
+                place.amenity_ids.append(amenity_id)
+                place.save()
+                return jsonify(amenity.to_dict()) 201
         place.save()
         return jsonify({}), 200
     else:
-        place.amenities.remove(amenity)
+        if meth == 'DELETE':
+            place.amenities.remove(amenity)
+        else:
+            if not data:
+                return jsonify({'error': 'Not a JSON'}), 400
+            elif amenity.place_id == place_id:
+                return jsonify(amenity.to_dict()) 200
+            else:
+                place.amenities.append(amenity_id)
+                place.save()
+                return jsonify(amenity.to_dict()) 201
         place.save()
         return jsonify({}), 200

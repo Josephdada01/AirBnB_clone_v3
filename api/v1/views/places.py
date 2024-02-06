@@ -37,7 +37,7 @@ def city_places(city_id):
             return jsonify({"error": "Missing name"}), 400
         elif 'User.' + data['user_id'] not in users:
             abort(404)
-        place = Place(**data)
+        place = Place(name=data['name'], user_id=data['user_id'])
         place.save()
         return jsonify(place.to_dict()), 201
 
