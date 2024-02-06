@@ -6,8 +6,11 @@ from models import storage
 from api.v1.views import app_views
 from flask import Blueprint
 import os
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+cors = CORS(app, resources={r'/*': {"origins": "0.0.0.0"}})
 
 """Registering the blue print of appviews"""
 app.register_blueprint(app_views, url_prefix='/api/v1')
